@@ -46,6 +46,7 @@ export default {
     background: #1976d2;
     position: relative;
     margin-bottom: 1rem;
+    overflow-wrap: break-word;
 
     p {
       margin-bottom: 0;

@@ -32,12 +32,23 @@
         </v-card-text>
       </v-card>
     </v-flex>
+
+    <v-snackbar v-model="snackbar" :timeout="timeout">
+      {{ errorText }}
+
+      <template v-slot:action="{ attrs }">
+        <v-btn color="blue" text v-bind="attrs" @click="snackbar = false">
+          Close
+        </v-btn>
+      </template>
+    </v-snackbar>
   </v-layout>
 </template>
 
 
 <script>
 import { mapMutations } from 'vuex'
+import snackBarMixin from '@/mixins/snackBar'
 
 export default {
   layout: 'empty',
@@ -49,6 +60,7 @@ export default {
       console.log('Socket io connected')
     },
   },
+  mixins: [snackBarMixin],
   data: () => ({
     valid: true,
     name: '',
@@ -71,7 +83,8 @@ export default {
 
         this.$socket.emit('userJoined', user, (data) => {
           if (typeof data === 'string') {
-            console.error(data)
+            // Возможноздесь проверку не нужно делать
+            console.log('error', data)
           } else {
             user.id = data.userId
             this.setUser(user)
@@ -80,6 +93,20 @@ export default {
         })
       }
     },
+  },
+  mounted() {
+    const { message } = this.$route.query
+
+    switch (message) {
+      case 'leftChat':
+        this.errorText = 'You are left the chat!'
+        break
+      case 'noUser':
+        this.errorText = 'Fill in all the fields'
+        break
+    }
+
+    this.snackbar = !!message
   },
 }
 </script>

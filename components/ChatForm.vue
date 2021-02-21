@@ -10,10 +10,22 @@
         append-icon="mdi-send"
       />
     </v-col>
+
+    <v-snackbar v-model="snackbar" :timeout="timeout">
+      {{ errorText }}
+
+      <template v-slot:action="{ attrs }">
+        <v-btn color="blue" text v-bind="attrs" @click="snackbar = false">
+          Close
+        </v-btn>
+      </template>
+    </v-snackbar>
   </v-row>
 </template>
 
 <script>
+import snackBarMixin from '@/mixins/snackBar'
+
 export default {
   data() {
     return {
@@ -30,7 +42,8 @@ export default {
         },
         (data) => {
           if (typeof data === 'string') {
-            console.error("Can't send message(")
+            this.showSnackBar("Can't send message(")
+            // this.$store.commit.showError("Can't send message(")
           } else {
             this.text = ''
           }
@@ -38,5 +51,6 @@ export default {
       )
     },
   },
+  mixins: [snackBarMixin],
 }
 </script>
